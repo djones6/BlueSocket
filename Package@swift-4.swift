@@ -26,13 +26,11 @@ let package = Package(
             name: "Socket",
             targets: ["Socket"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-nio.git", from: "1.0.0"),
-    ],
+    dependencies: [],
     targets: [
         .target(
             name: "Socket",
-            dependencies: ["NIOConcurrencyHelpers"],
+            dependencies: [],
             exclude: ["BlueSocket.xcodeproj", "BlueSocket.xcworkspace", "README.md", "Sources/Info.plist", "Sources/Socket.h"]
         ),
         .testTarget(

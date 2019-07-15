@@ -25,8 +25,7 @@
 #endif
 
 import Foundation
-
-import NIOConcurrencyHelpers
+import Dispatch
 
 // MARK: Socket
 
@@ -828,10 +827,11 @@ public class Socket: SocketReader, SocketWriter {
 	/// The file descriptor representing this socket. (Readonly)
 	///
 	public internal(set) var socketfd: Int32 {
-            get { return _socketfd.load() }
-            set { _socketfd.store(newValue) }
+            get { return _socketfdQueue.sync { return _socketfd } }
+            set { _socketfdQueue.sync(flags: .barrier) { _socketfd = newValue } }
         }
-	private var _socketfd: Atomic<Int32> = Atomic<Int32>(value: SOCKET_INVALID_DESCRIPTOR)
+	private var _socketfd: Int32 = SOCKET_INVALID_DESCRIPTOR
+        private let _socketfdQueue = DispatchQueue(label: "Socket_socketfd", attributes: .concurrent)
 
 	///
 	/// The signature for the socket. (Readonly)
